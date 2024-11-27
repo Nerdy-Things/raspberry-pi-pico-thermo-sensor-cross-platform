@@ -2,7 +2,8 @@
 
 ## Setup
 
-* Clone the repository and run inside it: * 
+*Clone the repository and run inside it* 
+
 ```bash
 git submodule init && git submodule update
 ```
