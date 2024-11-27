@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.serialization.json.Json
-
-class UdpServer {
+object UdpServer {
 
     @OptIn(DelicateCoroutinesApi::class)
     suspend fun listenUdpMessages(): Flow<TemperatureData> {
@@ -28,6 +27,7 @@ class UdpServer {
                 temperatureData.emit(temperature)
                 println("Received message: $message from ${datagram.address}")
             }
+            serverSocket.dispose()
         }
         return temperatureData.asSharedFlow()
     }

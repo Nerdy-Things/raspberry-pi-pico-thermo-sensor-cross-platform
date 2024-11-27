@@ -1,5 +1,11 @@
 This is a Kotlin Multiplatform project targeting Android, iOS, Desktop.
 
+# To run:
+
+* `desktop` - `./gradlew run`
+* `Android` - use a *Run* button/menu in Android studio
+* `iOS` - open `iosApp/iosApp.xcodeproj` in xCode and press *Run* 
+
 * `/composeApp` is for code that will be shared across your Compose Multiplatform applications.
   It contains several subfolders:
   - `commonMain` is for code that’s common for all targets.
