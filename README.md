@@ -7,7 +7,7 @@
 ```bash
 git submodule init && git submodule update
 ```
-## Pico code
+## Raspberry PI Pico DS18B20 Temperature Sensor
 
 Use Visual Studio Code and MicroPico plugin. Open the `pico-thermometer` folter in it and follow the instruction below. 
 Don't forget to set your Wi-Fi credentials in the `pico-thermometer/main.py` file.
