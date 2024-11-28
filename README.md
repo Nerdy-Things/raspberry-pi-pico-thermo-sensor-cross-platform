@@ -1,4 +1,3 @@
-# rasperry-pi-pico-thermo-sensor-cross-platform
 
 ## Setup
 
