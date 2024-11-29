@@ -5,38 +5,47 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.*
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
+@OptIn(DelicateCoroutinesApi::class)
 @Composable
 @Preview
 fun App() {
-    val coroutineScope = rememberCoroutineScope()
-    val messages = MutableSharedFlow<TemperatureData>()
-    coroutineScope.launch {
-        UdpServer.listenUdpMessages().collect {
-            messages.emit(it)
-        }
-    }
     // No architecture. Keep It Simple, Stupid. It's a demo
-    val sensorMap = remember { mutableStateOf(HashMap<String, TemperatureData>()) }
-    val newSensorData = messages.collectAsState(initial = null).value
-    newSensorData?.let { data ->
-        sensorMap.value[data.macAddress] = data // Update or add new data by MAC address
+    val coroutineScope = rememberCoroutineScope()
+    val sensorMap = mutableMapOf<String, TemperatureData>()
+    val state = mutableStateOf<List<TemperatureData>>(emptyList())
+    val messageFlow = UdpServer.listenUdpMessages(coroutineScope)
+    val messages = remember { state }
+
+    coroutineScope.launch {
+        messageFlow.collect {
+            // Update or add new data by MAC address
+            sensorMap[it.macAddress ?: it.name ?: ""] = it
+            state.value = sensorMap.values.sortedBy { it.name }
+        }
     }
 
     ThermoSensorAppTheme {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Thermo Sensor Data") },
+                    title = { Text("Temperature Sensor Data") },
                     backgroundColor = MaterialTheme.colors.primary,
                     contentColor = MaterialTheme.colors.onPrimary
                 )
             },
             content = {
-                SensorListView(sensorData = sensorMap.value.values.toList())
+                SensorListView(sensorData = messages.value)
             }
         )
     }

@@ -8,27 +8,34 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.serialization.json.Json
-object UdpServer {
+import kotlin.concurrent.Volatile
+import kotlin.coroutines.suspendCoroutine
 
-    @OptIn(DelicateCoroutinesApi::class)
-    suspend fun listenUdpMessages(): Flow<TemperatureData> {
-        val temperatureData = MutableSharedFlow<TemperatureData>()
-        withContext(Dispatchers.IO) {
-            print("Trying to open")
+object UdpServer {
+    @Volatile
+    private var serverSocket: BoundDatagramSocket? = null
+    private val temperatureData = MutableSharedFlow<TemperatureData>()
+
+    fun listenUdpMessages(scope: CoroutineScope): Flow<TemperatureData> {
+        scope.launch(Dispatchers.IO + CoroutineName("BackgroundCoroutine")) {
             val selectorManager = SelectorManager(Dispatchers.IO)
-            val serverSocket = aSocket(selectorManager)
+            serverSocket?.dispose()
+            val newSocket = aSocket(selectorManager)
                 .udp()
                 .bind(InetSocketAddress("0.0.0.0", 5468))
-            println("UDP server is listening on ${serverSocket.localAddress}")
-            while (isActive) {
-                val datagram = serverSocket.receive()
+            serverSocket = newSocket
+            println("UDP server is listening on ${serverSocket?.localAddress}")
+            while (isActive && newSocket == serverSocket) {
+                val datagram = serverSocket?.receive() ?: break
                 val message = datagram.packet.readText()
                 val temperature = Json.decodeFromString<TemperatureData>(message)
                 temperatureData.emit(temperature)
                 println("Received message: $message from ${datagram.address}")
             }
-            serverSocket.dispose()
+            println("Cleared socket")
+            serverSocket?.dispose()
+            serverSocket = null
         }
-        return temperatureData.asSharedFlow()
+        return temperatureData
     }
 }

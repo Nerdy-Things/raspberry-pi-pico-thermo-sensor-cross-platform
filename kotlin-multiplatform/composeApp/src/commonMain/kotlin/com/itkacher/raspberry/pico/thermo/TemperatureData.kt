@@ -6,9 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TemperatureData(
     @SerialName("name")
-    val name: String,
+    val name: String? = null,
     @SerialName("temperature")
     val temperature: Double,
     @SerialName("mac_address")
-    val macAddress: String,
+    val macAddress: String? = null,
 )
