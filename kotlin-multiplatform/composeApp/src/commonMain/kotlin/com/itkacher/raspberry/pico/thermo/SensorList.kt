@@ -60,7 +60,7 @@ fun SensorItemView(sensor: TemperatureData) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Sensor: ${sensor.name}",
+                text = "${sensor.name}",
                 style = MaterialTheme.typography.body1.copy(color = Color.White),
                 modifier = Modifier.weight(1f),
                 maxLines = 1,
@@ -68,7 +68,7 @@ fun SensorItemView(sensor: TemperatureData) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Temp: ${sensor.temperature}°C",
+                text = "${sensor.temperature}°C",
                 style = MaterialTheme.typography.body1.copy(color = Color.White),
             )
         }

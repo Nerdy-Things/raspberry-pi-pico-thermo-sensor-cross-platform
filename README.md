@@ -1,3 +1,12 @@
+# Raspberry PI Pico 2W DS18B20 Themperature sensor
+
+## YouTube video explanation:
+
+[![Watch the video](/3d-models/rpi-pico-thermometer-youtube.jpg)](https://www.youtube.com/watch?v=cGVsFtKSnn8)
+
+## 3D-Model
+
+https://www.printables.com/model/1092593-raspberry-pi-pico-temperature-sensor-case
 
 ## Setup
 
